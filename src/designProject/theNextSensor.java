@@ -7,9 +7,9 @@ import lejos.nxt.*;
  * The command itself is 3 bits long. Rest of the bits contain additional data. x means the bit state doesn't matter.
  * [b7] [b6] [b5] [b4] [b3] [b2] [b1] [b0]
  *  0    0    1    x    x    x    x    x   <- Get current mode in the hardware. Return 1 byte: 0 (off), 1 (reset), 2(ping), 3(continuous)
- *  0    1    0    0    0    0    m2   m1  <- Set current mode in the hardware. off (m2m1=00), 
+ *  0    1    0    0    0    0    m1   m0  <- Set current mode in the hardware. off (m2m1=00), 
  *                                            reset (m2m1=01), ping (m2m1=10), continuous (m2m1=11)
- *  0    1    1    0    0    b2   b1   b0  <- Get the distance value(s). [b2-b0] is the number of distance values to read (1-8) minus 1 
+ *  1    d6   d5   d4   d3   d2   d1   d0  <- Get the distance value(s). [d6-d0] is the number of distance values to read (1-128) minus 1 
  *  
  *  
  *  In continuous mode, the sensor keeps polling for distance at a certain interval and stores it in memory until getDistance function is
@@ -25,12 +25,12 @@ public class theNextSensor {
 
 	private final byte CMD_GET_MODE = 1;
 	private final byte CMD_SET_MODE = 2;
-	private final byte CMD_GET_DIST = 3;
-
-	private String errorMessage;
+	private final byte CMD_GET_DIST = 4;
 
 	// Position of the command bits
 	private final byte CMD_SHIFT = 5;
+
+	private String errorMessage;
 
 	public static enum Mode{
 		MODE_OFF,
@@ -43,7 +43,7 @@ public class theNextSensor {
 		sensor = new I2cUart(port, simulation);
 		currentMode = Mode.MODE_CONTINUOUS;
 		errorMessage = "";
-
+		
 		if (!sensor.testConn()) {
 			System.out.println("theNextSensor ERROR: Unable to connect to the sensor.");
 		}		

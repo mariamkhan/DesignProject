@@ -42,7 +42,7 @@ public class piSimulator {
 
 	private final byte CMD_GET_MODE = 1;
 	private final byte CMD_SET_MODE = 2;
-	private final byte CMD_GET_DIST = 3;
+	private final byte CMD_GET_DIST = 4;
 
 	// Value to represent how many bits are used for the command
 	private final byte CMD_MASK = 0x7; // 3 bits

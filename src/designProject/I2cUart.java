@@ -39,11 +39,11 @@ public class I2cUart {
 
 	final byte UART_CONFIG_DIVL = 0x60; // Bauderate of 9600 with xtal=14MHz
 	final byte UART_CONFIG_DIVH = 0x00;
-	final byte UART_CONFIG_DATA_FORMAT = 0x53;
+	final byte UART_CONFIG_DATA_FORMAT = 0x3;
 
 	// This depends on how A0 and A1 are connected on the chip.
 	// Current address is valid if A0 and A1 and connected to Vgg (Ground).
-	final int ADDRESS = 0x9A >> 1;
+	final int ADDRESS = 0x9A;
 
 	private I2CSensor mySensor;
 	private boolean simulation;
@@ -60,6 +60,8 @@ public class I2cUart {
 
 		if (simulation) {
 			piSim = new piSimulator();
+		} else {
+			init();
 		}
 		myByte = new byte [1]; 
 		errorMessage = "";
@@ -74,6 +76,10 @@ public class I2cUart {
 
 		myByte = new byte [1]; 
 		errorMessage = "";
+	}
+	
+	public I2cUart(SensorPort port) {
+		mySensor = new I2CSensor(port, ADDRESS, NXTProtocol.RAWMODE, SensorConstants.TYPE_LOWSPEED);
 	}
 
 	private int sendDataRoot(int register, byte value) {
@@ -194,7 +200,8 @@ public class I2cUart {
 			return -1;
 		}
 	}
-
+	
+	
 	/*
 	 * Check that UART is connected and operational 
 	 */
@@ -227,4 +234,5 @@ public class I2cUart {
 		createErrorMessage("Test failure. Sent byte '" + TEST_CHARACTER + "'does not match the received byte '" + myByte[0] + "'");
 		return false;
 	}
+	
 }

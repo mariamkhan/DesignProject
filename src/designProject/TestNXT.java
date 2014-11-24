@@ -1,12 +1,35 @@
 package designProject;
 
-import lejos.nxt.Button;
 import lejos.nxt.*;
 
 public class TestNXT {
 
 	public static void main(String[] args) {
-		int myDistance;
+		
+			// TODO Auto-generated method stub
+	System.out.println("Hello");
+	Button.waitForAnyPress();
+	
+	theNextSensor myUart = new theNextSensor(SensorPort.S1, false);
+
+	myUart.setMode(theNextSensor.Mode.MODE_CONTINUOUS);
+	
+	int myDistance = myUart.getDistance();
+	if (myDistance == -1) {
+		System.out.println(myUart.getErrorTrace());
+	}
+	int[] dist = new int[theNextSensor.MAX_DISTANCES];	
+	// Get multiple distance values
+	if(myUart.getDistance(dist, 8) == -1) {
+		// An error occurred while reading the distances
+		System.out.println(myUart.getErrorTrace());
+		return;
+	}
+	
+	Button.waitForAnyPress();
+	
+	
+		/*int myDistance;
 		int[] dist = new int[theNextSensor.MAX_DISTANCES];
 		
 		System.out.println("Hello World!");
@@ -47,6 +70,7 @@ public class TestNXT {
 			System.out.print(dist[i] + ", ");
 		}
 		System.out.println("\n");
+		*/
 	}
 
 }
