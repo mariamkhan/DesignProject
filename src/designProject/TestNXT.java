@@ -3,6 +3,7 @@ package designProject;
 import lejos.nxt.*;
 
 public class TestNXT {
+	
 
 	public static void main(String[] args) {
 		
@@ -11,7 +12,8 @@ public class TestNXT {
 	Button.waitForAnyPress();
 	
 	theNextSensor myUart = new theNextSensor(SensorPort.S1, false);
-
+	/*
+	
 	myUart.setMode(theNextSensor.Mode.MODE_CONTINUOUS);
 	
 	int myDistance = myUart.getDistance();
@@ -26,51 +28,73 @@ public class TestNXT {
 		return;
 	}
 	
-	Button.waitForAnyPress();
+	*/
 	
 	
-		/*int myDistance;
+	
+	
+		int myDistance;
 		int[] dist = new int[theNextSensor.MAX_DISTANCES];
 		
 		System.out.println("Hello World!");
-		theNextSensor myUart = new theNextSensor();
+		
+		//theNextSensor myUart = new theNextSensor();
 
 		// Set the mode to off
-		myUart.setMode(theNextSensor.Mode.MODE_OFF);
+		//myUart.getMode();
 
 		// Get the distance but it should return an error because the sensor is off
-		myDistance = myUart.getDistance();
-		if (myDistance == -1) {
-			System.out.println(myUart.getErrorTrace());
-		}
+//		while(true){
+//		myDistance = myUart.getDistance();
+//		
+//		System.out.println("Read: " + myDistance);
+//		Button.waitForAnyPress();
+//	}
+		/*
+		
 		// Set the mode to continuous
 		myUart.setMode(theNextSensor.Mode.MODE_CONTINUOUS);
 
-		// Get the distance
-		myDistance = myUart.getDistance();
-		System.out.println("Distance is: " + myDistance);
+//		// Get the distance
+//		myDistance = myUart.getDistance();
+//		System.out.println("Distance is: " + myDistance);
 		
 		if (myDistance == -1) {
 			// Either an error occurred or there is no object detected
 			System.out.println(myUart.getErrorTrace());
 		}
 		
-		// Set the mode to Ping
-		myUart.setMode(theNextSensor.Mode.MODE_PING);
+		*/
 		
-		// Get multiple distance values
+		// Set the mode to Ping
+//		myUart.setMode(theNextSensor.Mode.MODE_PING);
+//		
+//		// Get multiple distance values
+		//myUart.getDistance(dist,8);
+		/*
 		if(myUart.getDistance(dist, 8) == -1) {
 			// An error occurred while reading the distances
 			System.out.println(myUart.getErrorTrace());
-			return;
 		}
-		
+
 		System.out.println("Multiple distance values: ");
-		for (int i=0; i<7; i++) {
+		for (int i=0; i<8; i++) {
 			System.out.print(dist[i] + ", ");
 		}
 		System.out.println("\n");
 		*/
+		   
+		System.out.println("Printing x and corresponding z values: ");
+		int[][] mdist = new int[2][8];
+		if (myUart.getDistance(mdist, 8) == -1) {
+			System.out.println(myUart.getErrorTrace());
+			Button.waitForAnyPress();
+		}
+		for (int i=0; i<8; i++) {
+			System.out.print(mdist[0][i] + ", " + mdist[1][i] + " || ");
+			Button.waitForAnyPress();
+		}	
+		//Button.waitForAnyPress();
 	}
 
 }

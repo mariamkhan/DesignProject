@@ -1,5 +1,6 @@
 package designProject;
 import lejos.nxt.*;
+import lejos.util.Delay;
 
 /*
  * Commands sent to sensor hardware:
@@ -21,7 +22,8 @@ public class theNextSensor {
 	private I2cUart sensor;
 	private Mode currentMode;
 
-	public static final byte MAX_DISTANCES = 8;
+	public static final int MAX_DISTANCES = 128;
+	public static final int xpixels = 1944;
 
 	private final byte CMD_GET_MODE = 1;
 	private final byte CMD_SET_MODE = 2;
@@ -41,7 +43,8 @@ public class theNextSensor {
 
 	public theNextSensor(SensorPort port, boolean simulation) {		
 		sensor = new I2cUart(port, simulation);
-		currentMode = Mode.MODE_CONTINUOUS;
+		currentMode = Mode.MODE_PING;
+		setMode(currentMode);
 		errorMessage = "";
 		
 		if (!sensor.testConn()) {
@@ -93,6 +96,18 @@ public class theNextSensor {
 		}
 	}
 
+	/*
+	 * Combine two bytes into a short signed integer
+	 */
+	/*private int combineBytes(byte b1, byte b2, byte b3, byte b4) {
+		int s4 = b4 >= 0 ? b4: 256 + b4;
+		int s3 = b3 >= 0 ? b3: 256 + b3;
+		int s2 = b2 >= 0 ? b2: 256 + b2;
+		int s1 = b1 >= 0 ? b1: 256 + b1;
+		return (int)(s1 | (s2 << 8) | (s3 << 16) | (s4 << 24));			
+	}
+	*/
+	
 	/*
 	 * Combine two bytes into a short signed integer
 	 */
@@ -239,23 +254,70 @@ public class theNextSensor {
 			createErrorMessage("getDistance: Error sending 'get distance' command");
 			return -1;
 		};
-
+//		Delay.msDelay(1000);
+//		if(sensor.readData(buf, num*4) < 0) {
+//			// error reading the data
+//			createErrorMessage("getDistance: Error reading distance values from the sensor");			
+//			return -1;
+//		}
+		
+		
+		
+		byte[] tmpbuf = new byte[2];
+//		int i = 0;
+		int i = 0;
 		// read the distances (each distance value is 2 bytes long)
-		if(sensor.readData(buf, num*2) < 0) {
+		while(sensor.availableData() < num*2) ;
+		System.out.println("Initial Count: " + sensor.availableData());
+		Button.waitForAnyPress();
+		//if(sensor.readData(buf, num*4) < 0) {
+		while(sensor.availableData() > 0){
 			// error reading the data
-			createErrorMessage("getDistance: Error reading distance values from the sensor");			
-			return -1;
-		};
+			sensor.readData(tmpbuf, 2);
+			System.out.println("Bytes available: " + sensor.availableData());
+			dist[i] = combineBytes(tmpbuf[0], tmpbuf[1]);
+			//int firstInterval = xpixels/(num+1);
+			i++;
+			}
+			//createErrorMessage("getDistance: Error reading distance values from the sensor");			
+			//return -1;
+		return 0;
+			 }
+		
+		
+//		System.out.println(sensor.availableData());
 
+		
+		/*
+		
 		// Initialize all the distance values to default (-1)
 		for (int i=0; i<dist.length; i++) {
 			dist[i] = -1;
 		}
 
 		for (int i=0; i<num; i++) {		
-			dist[i] = combineBytes(buf[i*2], buf[(i*2)+1]);
+			dist[i] = combineBytes(buf[i*4], buf[(i*4)+1], buf[(i*4)+2], buf[(i*4)+3]);
+			//int firstInterval = xpixels/(num+1);
+			
 		}
 		return 0;
-	}	
+	}
+	*/
+	
+	public int getDistance(int[][] dist, int num) {
+		if (dist.length < 2) {
+			createErrorMessage("2D distance array length has to be 2");
+			return -11;
+		}
+		if (dist[0].length < num) {
+			createErrorMessage("2D distance array size must be equal to greater than required distances");
+			return -12;
+		}
+		int firstInterval = Math.round(xpixels/(num+1));
+		for (int i=0; i<num; i++) {
+			dist[0][i] = (i+1)*firstInterval;
+		}
+		return getDistance(dist[1], num);
+	}
 
 }
