@@ -22,7 +22,7 @@ public class theNextSensor {
 	private I2cUart sensor;
 	private Mode currentMode;
 
-	public static final int MAX_DISTANCES = 128;
+	public static final int MAX_DISTANCES = 32;
 	public static final int xpixels = 1944;
 
 	private final byte CMD_GET_MODE = 1;
@@ -268,13 +268,13 @@ public class theNextSensor {
 		int i = 0;
 		// read the distances (each distance value is 2 bytes long)
 		while(sensor.availableData() < num*2) ;
-		System.out.println("Initial Count: " + sensor.availableData());
-		Button.waitForAnyPress();
+		//System.out.println("Initial Count: " + sensor.availableData());
+		//Button.waitForAnyPress();
 		//if(sensor.readData(buf, num*4) < 0) {
 		while(sensor.availableData() > 0){
 			// error reading the data
 			sensor.readData(tmpbuf, 2);
-			System.out.println("Bytes available: " + sensor.availableData());
+			//System.out.println("Bytes available: " + sensor.availableData());
 			dist[i] = combineBytes(tmpbuf[0], tmpbuf[1]);
 			//int firstInterval = xpixels/(num+1);
 			i++;
